@@ -19,8 +19,7 @@ def main():
   #-------------------
 
   parser = argparse.ArgumentParser(
-      description="Convert an AnnData .h5ad file so that X (and raw/X) is stored in CSC sparse format (v 0.1.3)"
-  )
+      description="Convert an AnnData .h5ad file so that X (and raw/X) is reformatted for faster access (v 0.1.7)")
 
   parser.add_argument("--input",
       type=Path, 
@@ -73,9 +72,9 @@ def main():
            "Default: 2")
 
   parser.add_argument("--chunk",
-      nargs=2,
+      nargs=1,
       type=int, default=None,
-      help="Number of cells and genes per chunk. " 
+      help="Number of items in a chunk (cells or genes depending on format). " 
            "Default: None")
 
   # parse args
@@ -89,7 +88,7 @@ def main():
   if args.compression == "None":
     args.compression = None
 
-  print("Script version:", "0.1.5")
+  print("Script version:", "0.1.6")
 
   version = importlib.metadata.version("anndata")
   print("AnnData version:", version) 
@@ -247,10 +246,17 @@ def main():
     adata.write_h5ad( args.output, compression=compressMethod )
   elif args.output.suffix.endswith(".zarr"):    
     print("Writing Zarr...") 
-    ad.settings.zarr_write_format = args.zarrFormat
+    if hasattr(ad.settings, 'zarr_write_format'):
+      ad.settings.zarr_write_format = args.zarrFormat
     ad.settings.auto_shard_zarr_v3 = False 
 
-    # (cells_per_chunk, genes_per_chunk) )
+    # convert to sparse array so that chunking works
+    if isinstance(adata.X, sp.csc_matrix):
+        adata.X = sp.csc_array(adata.X)
+    elif isinstance(adata.X, sp.csr_matrix):
+        adata.X = sp.csr_array(adata.X)
+
+    # chunk by genes or cells
     adata.write_zarr( args.output,
         chunks=args.chunk)
 

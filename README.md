@@ -11,13 +11,14 @@ The result is a valid H5AD file supported by standard tools, but just optimized 
 Here, we download the script and examine the arguments:
 
 ```sh
+# recode_h5ad -h        
 usage: recode_h5ad [-h] --input INPUT --output OUTPUT [--ondisk]
                    [--sortBy SORTBY] [--compression {None,None,gzip,lzf,zstd}]
                    [--format {CSR,CSC}] [--noLibSize] [--colBlock COLBLOCK]
                    [--valueChunk VALUECHUNK] [--zarrFormat ZARRFORMAT]
+                   [--chunk CHUNK CHUNK]
 
-Convert an AnnData .h5ad file so that X (and raw/X) is stored in CSC sparse
-format (v 0.1.3)
+Convert an AnnData .h5ad file so that X (and raw/X) is reformatted for faster access (v 0.1.7)
 
 options:
   -h, --help            show this help message and exit
@@ -42,6 +43,8 @@ options:
                         in pass 1. Default: 8000000
   --zarrFormat ZARRFORMAT
                         Format version 2 or 3 Default: 2
+  --chunk CHUNK         Number of items in a chunk (cells or genes depending
+                        on format). Default: None
 ```
 
 ### Example
