@@ -16,9 +16,10 @@ usage: recode_h5ad [-h] --input INPUT --output OUTPUT [--ondisk]
                    [--sortBy SORTBY] [--compression {None,None,gzip,lzf,zstd}]
                    [--format {CSR,CSC}] [--noLibSize] [--colBlock COLBLOCK]
                    [--valueChunk VALUECHUNK] [--zarrFormat ZARRFORMAT]
-                   [--chunk CHUNK CHUNK]
+                   [--chunk CHUNK]
 
-Convert an AnnData .h5ad file so that X (and raw/X) is reformatted for faster access (v 0.1.7)
+Convert an AnnData .h5ad file so that X (and raw/X) is reformatted for faster
+access (v 0.1.7)
 
 options:
   -h, --help            show this help message and exit
@@ -45,6 +46,7 @@ options:
                         Format version 2 or 3 Default: 2
   --chunk CHUNK         Number of items in a chunk (cells or genes depending
                         on format). Default: None
+
 ```
 
 ### Example
